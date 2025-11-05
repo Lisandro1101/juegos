@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking de la Colmena 🏆</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css"> 
+    
+    <style>
+        /* Estilos específicos para esta página de ranking */
+        body {
+            /* Anulamos el 'display: flex' de style.css para permitir el scroll */
+            display: block; 
+            padding: 1rem;
+            min-height: 100vh;
+            /* Re-aplicamos el fondo que 'style.css' aplica al body */
+            background: linear-gradient(135deg, #FFFDE7 0%, var(--spring-bg) 100%);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Usamos una clase nueva para no entrar en conflicto con .portal-container */
+        .ranking-box {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 650px; /* Le damos un ancho máximo */
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        /* Estilos copiados de host.html para que las listas se vean igual */
+        .question-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: #f9fafb; /* gray-50 */
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .top-winner {
+            background-color: #FFCC00 !important; /* Miel brillante */
+            color: var(--bee-black) !important;
+            font-weight: 900 !important;
+            border: 3px solid var(--honey-gold) !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); /* Sombra de oro */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏆 Rankings de la Colmena 🐝</h1>
+
+    <div class="ranking-box">
+        <h2 class="text-2xl font-black mb-4 text-gray-800 flex items-center justify-center space-x-2">
+            <span class="text-yellow-500 text-3xl">🏆</span>
+            <span>Ranking de la Colmena (Trivia)</span>
+        </h2>
+        <p class="text-xs text-gray-600 mb-3 text-center">Clasificado por: Puntuación y luego menor tiempo.</p>
+        
+        <ul id="ranking-list" class="space-y-2">
+            <li class="p-2 text-gray-500 italic text-center">Cargando resultados...</li>
+        </ul>
+    </div>
+
+    <div class="ranking-box">
+        <h2 class="text-2xl font-black mb-4 text-gray-800 flex items-center justify-center space-x-2">
+            <span class="text-blue-500 text-3xl">🧠</span>
+            <span>Ranking de Memoria</span>
+        </h2>
+        <p class="text-xs text-gray-600 mb-3 text-center">Clasificado por: Menor tiempo.</p>
+        
+        <ul id="memory-ranking-list" class="space-y-2">
+            <li class="p-2 text-gray-500 italic text-center">Cargando resultados...</li>
+        </ul>
+    </div>
+
+    <script type="module" src="script.js?v=1.0"></script>
+</body>
+</html>

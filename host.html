@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anfitrión - Trivia Abejita 🐝</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para la temática de la Abejita Chiquita */
+        :root {
+            --bee-yellow: #FACC15; /* Tailwind yellow-400 */
+            --bee-black: #1F2937; /* Tailwind gray-800 */
+            --honey-gold: #F59E0B; /* Tailwind amber-500 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bee-yellow);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 1rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background-color: white;
+            border-radius: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            transition: all 0.3s ease-in-out;
+        }
+        /* Botón Primario */
+        .btn-bee {
+            background-color: var(--bee-black);
+            color: var(--bee-yellow);
+            font-weight: bold;
+            border-radius: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            transition: background-color 0.15s;
+            box-shadow: 0 4px var(--bee-yellow);
+            border: 3px solid var(--bee-yellow);
+        }
+        .btn-bee:hover:not(:disabled) {
+            background-color: #374151; /* gray-700 */
+            box-shadow: 0 2px var(--bee-yellow);
+            transform: translateY(2px);
+        }
+        .question-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: #f9fafb; /* gray-50 */
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .q-display {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+        .delete-btn {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .delete-btn:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+
+        /* 🏆 Estilo para el ganador del Ranking */
+        .top-winner {
+            background-color: #FFCC00 !important; /* Miel brillante */
+            color: var(--bee-black) !important;
+            font-weight: 900 !important;
+            border: 3px solid var(--honey-gold) !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); /* Sombra de oro */
+        }
+
+        /* --- NUEVO --- Estilos para el juego de memoria */
+        .image-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+        }
+        .image-preview-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid var(--honey-gold);
+        }
+        /* Barra de progreso */
+        #memory-upload-progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none; /* Oculto por defecto */
+        }
+        #memory-upload-progress {
+            width: 0%;
+            height: 10px;
+            background-color: var(--spring-green);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="container admin-mode">
+        
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-black text-gray-800 flex items-center justify-center space-x-2">
+                <span class="text-yellow-500 text-5xl">🛠️</span>
+                <span id="header-title">Panel de Control - Abejita</span>
+                <span class="text-yellow-500 text-5xl">🐝</span>
+            </h1>
+        </header>
+
+        <div class="mode-selector mb-6 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+            <p class="text-sm text-gray-700">Enlaces para jugadores:</p>
+            <a href="player.html" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium break-all">[Jugar Trivia 🐝]</a>
+            <br>
+            <a href="memory.html" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium break-all">[Jugar Memoria 🧠]</a>
+        </div>
+
+        <div id="admin-mode" class="quiz-section p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">✍️ Cargar y Editar Preguntas (Trivia)</h2>
+            
+            <form id="question-form" class="space-y-3">
+                
+                <div>
+                    <label for="q-text" class="block text-sm font-bold text-gray-700">Pregunta:</label>
+                    <input type="text" id="q-text" required placeholder="Escribe la pregunta aquí"
+                           class="w-full p-3 border border-yellow-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+
+                <div>
+                    <label for="q-options" class="block text-sm font-bold text-gray-700">Opciones (separadas por coma):</label>
+                    <input type="text" id="q-options" required placeholder="Opción A, Opción B, Opción C, Opción D"
+                           class="w-full p-3 border border-yellow-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+
+                <div>
+                    <label for="q-answer" class="block text-sm font-bold text-gray-700">Respuesta Correcta (Debe coincidir):</label>
+                    <input type="text" id="q-answer" required placeholder="Opción B"
+                           class="w-full p-3 border border-yellow-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+
+                <button type="submit" class="w-full btn-bee bg-gray-800 text-yellow-400 mt-4">
+                    Guardar Pregunta
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Banco de Preguntas</h3>
+                <ul id="questions-list" class="space-y-2">
+                    </ul>
+            </div>
+
+            <button id="clear-all-btn" class="w-full mt-6 bg-red-600 text-white hover:bg-red-700 delete-btn border-none" style="box-shadow: none;">
+                Limpiar Todas las Preguntas
+            </button>
+        </div>
+
+        <div class="ranking-section mt-8 p-4 bg-yellow-50 rounded-xl border border-yellow-400 shadow-xl">
+            <h2 class="text-2xl font-black mb-4 text-gray-800 flex items-center justify-center space-x-2">
+                <span class="text-yellow-500 text-3xl">🏆</span>
+                <span>Ranking de la Colmena (Trivia)</span>
+            </h2>
+            <p class="text-xs text-gray-600 mb-3 text-center">Clasificado por: Puntuación y luego menor tiempo.</p>
+            <ul id="ranking-list" class="space-y-2">
+                <li class="p-2 text-gray-500 italic text-center">Cargando resultados...</li>
+            </ul>
+        </div>
+        
+        <div id="memory-game-admin" class="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">⚙️ Imágenes del Juego de Memoria</h2>
+            
+            <form id="memory-image-form" class="space-y-3">
+                <div>
+                    <label for="memory-files" class="block text-sm font-bold text-gray-700">Subir Imágenes (Recomendado 6 u 8):</label>
+                    <input type="file" id="memory-files" 
+                           class="w-full p-3 border border-yellow-300 rounded-lg" 
+                           accept="image/*" 
+                           multiple 
+                           required>
+                    <p class="text-xs text-gray-500 mt-1">El juego usará estas fotos para crear los pares.</p>
+                </div>
+
+                <div id="memory-upload-progress-bar-container" class="hidden">
+                    <p id="memory-upload-status" class="text-xs text-gray-600 mb-1 text-left">Subiendo...</p>
+                    <div id="memory-upload-progress-bar">
+                        <div id="memory-upload-progress" style="width: 0%; height: 10px; background-color: #4CAF50; border-radius: 5px;"></div>
+                    </div>
+                </div>
+
+                <button type="submit" id="save-memory-images-btn" class="w-full btn-bee bg-gray-800 text-yellow-400 mt-4">
+                    Subir y Guardar Imágenes
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Imágenes Cargadas</h3>
+                <ul id="memory-images-list" class="space-y-2">
+                    <li class="p-2 text-gray-500 italic text-center">Aún no hay imágenes...</li>
+                </ul>
+            </div>
+
+            <button id="clear-memory-images-btn" class="w-full mt-6 bg-red-600 text-white hover:bg-red-700 delete-btn border-none" style="box-shadow: none;">
+                Limpiar Todas las Imágenes
+            </button>
+        </div>
+
+        <div class="ranking-section mt-8 p-4 bg-blue-50 rounded-xl border border-blue-400 shadow-xl">
+            <h2 class="text-2xl font-black mb-4 text-gray-800 flex items-center justify-center space-x-2">
+                <span class="text-blue-500 text-3xl">🧠</span>
+                <span>Ranking de Memoria</span>
+            </h2>
+            <p class="text-xs text-gray-600 mb-3 text-center">Clasificado por: Menor tiempo.</p>
+            <ul id="memory-ranking-list" class="space-y-2">
+                <li class="p-2 text-gray-500 italic text-center">Cargando resultados...</li>
+            </ul>
+        </div>
+
+        <div id="hangman-admin" class="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">✍️ Palabras para el Ahorcado 🐝</h2>
+            
+            <form id="hangman-word-form" class="space-y-3">
+                <div>
+                    <label for="h-word" class="block text-sm font-bold text-gray-700">Palabra/Frase Secreta:</label>
+                    <input type="text" id="h-word" required placeholder="Ej: ABEJITA CHIQUITITA"
+                           class="w-full p-3 border border-yellow-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"
+                           style="text-transform: uppercase;">
+                </div>
+                <button type="submit" id="save-hangman-word-btn" class="w-full btn-bee bg-gray-800 text-yellow-400 mt-4">
+                    Guardar Palabra
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Banco de Palabras (Ahorcado)</h3>
+                <ul id="hangman-words-list" class="space-y-2">
+                    <li class="p-2 text-gray-500 italic text-center">Aún no hay palabras...</li>
+                </ul>
+            </div>
+
+            <button id="clear-hangman-words-btn" class="w-full mt-6 bg-red-600 text-white hover:bg-red-700 delete-btn border-none" style="box-shadow: none;">
+                Limpiar Todas las Palabras
+            </button>
+        </div>
+
+    </div>
+    <script type="module" src="script.js?v=1.0"></script>
+</body>
+</html>

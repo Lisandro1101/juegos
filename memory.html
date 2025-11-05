@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Memoria de la Abejita 🧠</title>
+    <link rel="stylesheet" href="style.css"> 
+    
+    <style>
+        /* Estilos específicos para la cuadrícula del juego de memoria */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 columnas por defecto */
+        gap: 5px;
+        padding: 10px;
+        /* 💡 Aumentado el ancho máximo para dar más espacio a las cartas */
+        max-width: 600px; 
+        margin: 20px auto;
+    }
+
+        /* 💡 SOLUCIÓN RÁPIDA: Ocultar los elementos de la cuadrícula por defecto */
+        #memory-game-grid {
+            display: none; 
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* Estilos de la tarjeta (mantenidos de la versión anterior) */
+        .card {
+            background-color: var(--honey-gold);
+            border: 3px solid var(--bee-black);
+            height: 110px; 
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease-in-out;
+            touch-action: manipulation;
+        }
+        
+        /* 🚨 SOLUCIÓN AL PROBLEMA DE INTERACCIÓN 🚨 */
+        .modal-full-screen.hidden {
+            display: none !important;
+            /* Asegura que no captura clics */
+            pointer-events: none !important; 
+        }
+
+        /* 🚨 ESTILOS DEL CONTENEDOR MODAL/FLOTANTE (Para móviles) */
+        .modal-full-screen {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95); 
+            z-index: 9999; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto; 
+        }
+
+        /* Contenedor interno para que se vea como una sección */
+        .quiz-section-floating {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 550px; 
+            margin-top: 20px;
+        }
+
+        /* Ajuste específico para el grid dentro del modal */
+        .modal-full-screen .grid-container {
+            max-width: none; 
+            margin: 10px auto;
+        }
+        .close-btn:hover {
+            color: #F44336 !important;
+        }
+
+        /* RE-AJUSTE DE TAMAÑOS DE CARTA PARA MÓVILES */
+        @media (max-width: 768px) {
+            .modal-full-screen .card {
+                height: 140px; 
+            }
+            .modal-full-screen .grid-container {
+                max-width: 95%;
+                padding: 5px;
+            }
+        }
+        @media (max-width: 400px) {
+            .modal-full-screen .card {
+                height: 100px; 
+            }
+        }
+        /* ... el resto de las reglas CSS de la tarjeta (mantenidas) ... */
+    
+        .card-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s; 
+            transform-style: preserve-3d;
+        }
+        /* ... el resto de estilos de la tarjeta ... */
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front {
+            background-color: var(--bee-yellow);
+            color: var(--bee-black);
+            transform: rotateY(180deg);
+            padding: 2px; 
+        }
+
+        .card-front img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; 
+            border-radius: 5px;
+        }
+
+        .card-back {
+            background-color: var(--honey-gold);
+            border: 3px solid var(--bee-black);
+            color: white;
+            font-size: 1.5em;
+        }
+
+        /* Estilo para los resultados */
+        .results-container h2 {
+            color: var(--honey-gold);
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            font-weight: 900;
+        }
+        
+    </style>
+</head>
+<body>
+    
+    <div class="quiz-container">
+        
+        <div id="start-screen" class="quiz-section">
+            <h1 class="title">Juego de Memoria 🧠</h1>
+            <p class="mb-4">Ingresa tu nombre para comenzar a encontrar las parejas:</p>
+            
+            <label for="player-name-input" style="display: block; font-weight: bold; margin-bottom: 5px;">Tu Nombre de Jugador:</label>
+
+            <input type="text" id="player-name-input" class="text-input" placeholder="Tu Nombre" maxlength="20">
+            
+            <button id="start-btn" class="save-btn mt-4" style="background: var(--honey-gold);">¡Comenzar!</button>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="window.location.href='index.html'" style="background: none; border: none; color: #666; font-size: 0.9em; cursor: pointer;">
+                    Volver al Portal
+                </button>
+            </div>
+        </div>
+        <div id="modal-memory-game" class="modal-full-screen hidden">
+            
+            <div id="game-mode-container" class="quiz-section-floating"> 
+                <div id="game-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; background: #fff8e1; border-radius: 10px;">
+                    <div id="player-name-display" style="font-weight: bold;">Jugador: -</div> 
+                    <div id="timer" class="timer">Tiempo: <span>0</span>s</div>
+                    <button id="close-modal-btn" class="close-btn" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--bee-black); padding: 5px;">✖️</button>
+                </div>
+                
+                <div id="memory-game-grid" class="grid-container">
+                    <p class="text-center text-gray-500">Cargando imágenes...</p>
+                </div>
+            </div>
+
+            <div id="results" class="results-container hidden">
+                <h2>✨ ¡Memoria Completada! ✨</h2>
+                <p id="final-time">Tu tiempo fue de: 0 segundos</p>
+                
+                <button onclick="window.location.href='index.html'" class="save-btn mt-4" style="background: var(--honey-gold);">Volver al Portal</button>
+                <button id="play-again-modal-btn" class="save-btn mt-4" style="background: var(--spring-green);">Jugar de Nuevo</button>
+            </div>
+
+        </div>
+        </div>
+    <script type="module" src="script.js?v=1.0"></script>
+</body>
+</html>

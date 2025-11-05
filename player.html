@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia de la Abejita Chiquitita 🐝</title>
+    <link rel="stylesheet" href="style.css"> 
+    
+    <style>
+        /* Variables y Estilos Generales */
+        :root {
+            --bee-yellow: #FACC15; 
+            --bee-black: #1F2937; 
+            --honey-gold: #e69900; /* Miel más oscura */
+        }
+        
+        .quiz-section {
+            padding: 20px;
+        }
+
+        /* DEFINICIÓN DEL BOTÓN DE OPCIÓN (Clase usada en script.js) */
+        .option-btn {
+            width: 100%;
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            
+            /* Estilo Moderno Temático */
+            background-color: #ffb300; /* Amarillo Abeja */
+            border: 3px solid var(--honey-gold);
+            color: white;
+            box-shadow: 0 5px var(--honey-gold); /* Sombra "presionable" */
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #ff9900; 
+            transform: translateY(-2px);
+            box-shadow: 0 7px var(--honey-gold);
+        }
+
+        .option-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px var(--honey-gold);
+        }
+        
+        /* 🚨 FEEDBACK DE RESPUESTA */
+        .option-btn:disabled {
+            opacity: 0.9;
+        }
+        
+        .option-btn.correct {
+            background-color: #4CAF50 !important; /* Verde sólido */
+            border-color: #388E3C !important;
+            color: white !important;
+            box-shadow: 0 5px #388E3C !important;
+            transform: none !important;
+        }
+
+        .option-btn.incorrect {
+            background-color: #E53935 !important; /* Rojo sólido */
+            border-color: #C62828 !important;
+            color: white !important;
+            box-shadow: 0 5px #C62828 !important;
+            transform: none !important;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container player-mode">
+        <h1>🍯 Trivia del 1er Año de la Abejita 🐝</h1>
+        
+        <form id="start-form">
+            <div id="start-screen" class="quiz-section" style="padding: 20px;">
+                
+                <h2 style="color: #333; margin-bottom: 15px;">¡Bienvenido a la Colmena!
+                </h2>
+<h3 style="color: #333; margin-bottom: 10px;">¿Cuanto sabes de Amo?
+                </h3>
+<label for="player-name-input" style="display: block; font-weight: bold; margin-bottom: 5px;">Tu Nombre de Jugador:</label>
+                <input type="text" id="player-name-input" required placeholder="Escribe tu nombre" 
+                       style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 15px; border: 2px solid #ffcc00; border-radius: 5px;"
+                       maxlength="20">
+
+                <p id="player-no-questions-msg" style="color: red; font-weight: bold;" class="hidden">El anfitrión debe cargar las preguntas primero.</p>
+                
+                <button type="submit" id="start-game-btn" class="save-btn" style="background: #4caf50;">INICIAR JUEGO</button>
+            </div>
+        </form>
+        <div id="game-mode" class="quiz-section hidden">
+            
+            <div id="quiz-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; background: #fff8e1; border-radius: 10px;">
+                <div id="player-name-display" style="font-weight: bold;">Jugador: -</div> 
+                <div id="timer" class="timer">Tiempo: <span>10</span>s</div>
+                <div id="score" class="score">Puntos: <span>0</span></div>
+            </div>
+            
+            <div id="question-area">
+                <h2 id="question"></h2>
+                <div id="options-container" class="options-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                    </div>
+            </div>
+            
+            <button id="next-btn" class.name="save-btn mt-4" style="background: var(--honey-gold);">Siguiente Pregunta</button>
+
+        </div>
+
+        <div id="results" class="results-container hidden">
+            <h2>🎉 ¡Resultados Finales! 🎉</h2>
+            <p id="final-score">Tu puntuación es de: 0</p>
+            <button onclick="location.reload()" style="background: #e69900; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px;">Jugar de Nuevo</button>
+        </div>
+    </div>
+    <script type="module" src="script.js?v=1.0"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Recuerdos de la Abejita 🐝</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* Estilos CSS mínimos para el funcionamiento instantáneo */
+        .file-input-wrapper { display: block; width: 100%; margin-bottom: 8px; position: relative; overflow: hidden; }
+        .file-input-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
+        
+        /* 🚨 CORRECCIÓN MENÚ FLOTANTE */
+
+        /* 1. Ocultar por defecto usando la clase */
+        .hidden-dropdown {
+            display: none !important;
+        }
+
+        /* 2. Estilos para que el menú flote */
+        #juegos-dropdown {
+            position: absolute; /* Saca el menú del flujo normal */
+            top: 100%; /* Lo posiciona justo debajo de su contenedor padre (el div relativo) */
+            left: 0;
+            right: 0;
+            z-index: 50; /* Asegura que esté por encima del contenido de abajo */
+            
+            /* Estilos visuales para el panel flotante */
+            margin-top: 0.5rem; /* Pequeña separación del botón */
+            background-color: white;
+            border-radius: 1.5rem; /* 24px */
+            padding: 1.5rem; /* 24px */
+            border: 1px solid #e2e8f0; /* Borde suave */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Sombra para dar efecto "flotante" */
+        }
+    </style>
+</head>
+<body>
+
+    <a href="ranking.html" target="_blank" id="ranking-trophy-btn" title="Ver Rankings">🏆</a>
+
+    <div class="portal-container py-6 sm:py-8" style="position: relative;"> 
+        <header class="mb-6">
+            <p class="text-lg text-gray-500 uppercase font-semibold">¡Bienvenido a la Colmena!</p>
+            
+            <h1>Portal de Recuerdos 🍯</h1>
+            
+            <p class="text-gray-600 mt-2 text-xl">Deja un mensaje, una foto o video capturado.</p>
+        </header>
+
+        <div style="position: relative;">
+            
+            <button id="menu-juegos-toggle" class="btn-portal btn-messages">
+                <span class="mr-3 text-2xl">🕹️</span>
+                MENÚ DE JUEGOS
+                <span class="ml-3 text-xl">▼</span>
+            </button>
+
+            <div id="juegos-dropdown" class="hidden-dropdown">
+                <h3 class="text-xl font-black text-gray-800 mb-4 text-center">¡A Jugar!</h3>
+                
+                <div class="space-y-3">
+                    <a href="player.html" target="_blank" class="btn-portal btn-trivia juegos-dropdown-item">
+                        <span class="mr-3 text-2xl">🐝</span>
+                        ¿Cuanto conoces a Amo?
+                    </a>
+                <a href="memory.html" target="_blank" class="btn-portal btn-trivia juegos-dropdown-item">
+                        <span class="mr-3 text-2xl">🧠</span>
+                        Memoria con Amo
+                    </a>
+                    <a href="hangman.html" target="_blank" class="btn-portal btn-trivia juegos-dropdown-item">
+                        <span class="mr-3 text-2xl">🤫</span>
+                        Ahorcado
+                    </a>
+                </div>
+                <button id="cerrar-menu" class="text-sm text-gray-600 hover:text-gray-800 mt-4 w-full">
+                    Cerrar
+                </button>
+            </div>
+
+        </div> 
+        
+        <section class="py-4 rounded-xl border border-gray-200 memory-section-bg">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 flex items-center justify-center space-x-2">
+                <span class="text-2xl">💖</span>
+                <span>Deja tu Recuerdo</span>
+            </h2>
+
+            <form id="memory-form" class="transparent-form py-6 rounded-lg shadow-md mb-8">
+                <input type="text" id="guest-name" required placeholder="Tu Nombre" 
+                       class="input-bee w-full p-3 border border-yellow-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                
+                <textarea id="guest-message" placeholder="Tu mensaje de texto (opcional)"
+                          class="textarea-bee w-full p-3 border border-yellow-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 h-16 resize-none"></textarea>
+
+                
+                <div class="flex flex-col space-y-2 w-full"> 
+                    
+                    <div class="file-input-wrapper w-full">
+                        <label for="guest-file-photo" class="btn-portal btn-messages">
+                            <span class="mr-1">📸</span> Capturar Foto
+                        </label>
+                        <input type="file" id="guest-file-photo" 
+                               accept="image/*" 
+                               capture="camera"> 
+                    </div>
+                    
+                    <div class="file-input-wrapper w-full">
+                        <label for="guest-file-video" class="btn-portal btn-messages">
+                            <span class="mr-1">🎥</span> Grabar Video
+                        </label>
+                        <input type="file" id="guest-file-video" 
+                               accept="video/*" 
+                               capture="camcorder"> 
+                    </div>
+                </div>
+                           
+                <p id="file-name-display" class="text-sm text-gray-600 italic mt-2"></p>
+                
+                <div id="upload-progress-bar-container" class="hidden">
+                    <p id="upload-status" class="text-xs text-gray-600 mb-1 text-left">Subiendo...</p>
+                    <div id="upload-progress-bar"><div id="upload-progress"></div></div>
+                </div>
+
+                <button type="submit" id="submit-memory-btn" class="btn-portal btn-messages h-12 mt-4">
+                    Enviar Recuerdo 🎁
+                </button>
+            </form>
+
+            <h3 class="text-lg font-bold mb-2 text-gray-700">Recuerdos de la Colmena</h3>
+            <div id="memories-list" class="max-h-60 overflow-y-auto py-2 border border-dashed border-gray-300 rounded-lg bg-white">
+                <p class="text-sm text-gray-500 italic">Cargando mensajes...</p>
+            </div>
+            
+        </section>
+
+    </div>
+
+    <script type="module" src="portalScript.js?v=1.0"></script>
+
+    <div id="custom-toast-message" class="custom-toast">
+        Recuerdo grabajo en el corazón ¡Gracias por estar, te queremos!
+    </div>
+
+</body>
+</html>

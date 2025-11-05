@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 Panel de Super-Administrador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- ESTILOS MEJORADOS (MOBILE-FIRST) --- */
+        :root {
+            --bee-yellow: #FACC15;
+            --bee-black: #1F2937;
+            --honey-gold: #F59E0B;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bee-black);
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 1rem; /* Padding para móviles */
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            color: var(--bee-black);
+            border-radius: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            /* Padding más pequeño para móvil, más grande para desktop */
+            padding: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .container {
+                padding: 2.5rem;
+            }
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            margin-top: 0.5rem; /* Aumentado para más espacio */
+        }
+        .input-label {
+            display: block;
+            font-weight: 700;
+            margin-top: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .btn-admin {
+            background-color: var(--bee-black);
+            color: var(--bee-yellow);
+            font-weight: bold;
+            border-radius: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 1.5rem;
+            border: 3px solid var(--bee-yellow);
+        }
+        .btn-admin:hover:not(:disabled) {
+            background-color: #374151;
+            transform: translateY(-2px);
+        }
+        .btn-admin:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        /* --- MEJORA: Wrapper de Color --- */
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* 12px */
+            flex-grow: 1;
+            min-width: 150px; /* Evita que se encoja demasiado */
+        }
+        .color-picker-wrapper input[type="color"] {
+            width: 44px; /* Tamaño fijo */
+            height: 44px;
+            border-radius: 0.5rem;
+            border: 2px solid #e5e7eb;
+            padding: 0;
+            cursor: pointer;
+            flex-shrink: 0; /* No se encoge */
+        }
+        
+        /* --- MEJORA: Interruptores (Toggles) --- */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem; /* Espacio entre label y toggle */
+            padding: 0.75rem;
+            background-color: #f9fafb;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+        .toggle-label {
+            font-weight: 600;
+            color: var(--bee-black);
+            flex: 1; /* Ocupa el espacio disponible */
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0; /* No se encoge */
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #4ade80; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* --- ⭐️ NUEVOS ESTILOS (Reutilizados de host.html) --- */
+        .question-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: #f9fafb; /* gray-50 */
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .q-display {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+        .delete-btn {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .delete-btn:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-3xl font-black text-center mb-6">
+            👑 Panel de Eventos
+        </h1>
+        <p class="text-center text-gray-600 mb-6">
+            Crea un nuevo evento o actualiza uno existente usando su ID.
+        </p>
+
+        <form id="event-form">
+            
+            <div>
+                <label for="event-id" class="input-label">ID del Evento (¡Importante!):</label>
+                <input type="text" id="event-id" class="input-field" 
+                       placeholder="ej: boda-lucia-y-pablo" required>
+                <p class="text-xs text-gray-500 mt-1">Este será el identificador en la URL. Sin espacios ni 'ñ'.</p>
+            </div>
+            
+            <div class="mt-6">
+                <h2 class="text-xl font-bold mb-4">🚀 Funcionalidades y Estado</h2>
+                <div class="space-y-3">
+                    <div class="toggle-wrapper">
+                        <span class="toggle-label">🕹️ Habilitar Módulo de Juegos</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="games-enabled" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-wrapper">
+                        <span class="toggle-label">🟢 Habilitar Evento (Activo)</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="event-active" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Si deshabilitas un evento, nadie podrá ingresar.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-6 border-t pt-4">
+                <h2 class="text-xl font-bold mb-4">🎨 Personalización del Tema</h2>
+                
+                <div>
+                    <label class="input-label">Paleta de Colores:</label>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="color-primary" value="#FACC15">
+                            <span class="text-sm">Primario<br>(--bee-yellow)</span>
+                        </div>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="color-secondary" value="#F59E0B">
+                            <span class="text-sm">Secundario<br>(--honey-gold)</span>
+                        </div>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="color-text" value="#1F2937">
+                            <span class="text-sm">Texto<br>(--bee-black)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label for="font-family" class="input-label">Fuente Principal:</label>
+                    <select id="font-family" class="input-field">
+                        <option value="'Inter', sans-serif">Inter (Moderna)</option>
+                        <option value="'Poppins', sans-serif">Poppins (Elegante)</option>
+                        <option value="'Times New Roman', serif">Times New Roman (Clásica)</option>
+                        <option value="'Arial', sans-serif">Arial (Simple)</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                    </select>
+                </div>
+
+                <div class="mt-4">
+                    <label for="bg-image" class="input-label">Imagen de Fondo (Opcional):</label>
+                    <input type="file" id="bg-image" class="input-field" accept="image/jpeg, image/png, image/webp">
+                    <p class="text-xs text-gray-500 mt-1">Si subes una nueva, reemplazará a la anterior.</p>
+                </div>
+            </div>
+            
+            <button type="submit" id="save-event-btn" class="btn-admin">
+                Guardar Configuración del Evento
+            </button>
+            <div id="status-message" class="text-center text-gray-700 font-medium mt-4"></div>
+
+        </form>
+
+        <div class="mt-8 border-t pt-6">
+            <h2 class="text-2xl font-black mb-4">Eventos Existentes</h2>
+            <ul id="existing-events-list" class="space-y-2">
+                <li class="p-2 text-gray-500 italic text-center">Cargando eventos...</li>
+            </ul>
+        </div>
+        </div>
+
+    <script type="module" src="super-admin.js?v=1.0"></script>
+</body>
+</html>

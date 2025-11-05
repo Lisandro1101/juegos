@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego del Ahorcado 🐝</title>
+    <link rel="stylesheet" href="style.css"> 
+    
+    <style>
+        /* Estilos específicos para el Ahorcado */
+        .hangman-container {
+            /* Usar el estilo base de quiz-container */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #hangman-art {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 1.2em;
+            line-height: 1;
+            color: var(--bee-black);
+            margin: 20px auto;
+            border: 2px dashed var(--honey-gold);
+            padding: 10px;
+            background-color: var(--spring-bg);
+            border-radius: 8px;
+        }
+
+        #word-display {
+            font-size: 2.5em;
+            letter-spacing: 0.5em; /* Separación grande entre guiones */
+            margin: 20px 0;
+            font-weight: 900;
+            color: var(--honey-gold);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        #keyboard-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .key-btn {
+            /* Estilo de tecla */
+            background-color: var(--bee-yellow);
+            color: var(--bee-black);
+            font-weight: bold;
+            border: 2px solid var(--honey-gold);
+            border-radius: 6px;
+            padding: 8px 10px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 3px var(--honey-gold);
+            min-width: 35px;
+            flex-grow: 1;
+        }
+
+        .key-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px var(--honey-gold);
+            background-color: #ff9800;
+        }
+
+        .key-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px var(--honey-gold);
+        }
+
+        .key-btn:disabled {
+            background-color: #ccc;
+            color: #666;
+            border-color: #999;
+            box-shadow: 0 1px #999;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        
+        .hangman-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #fff8e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container hangman-container">
+        
+        <div id="start-screen-hangman">
+            <h1 class="title">El Ahorcado de la Abejita 🍯</h1>
+            <p class="mb-4">Ingresa tu nombre para comenzar a adivinar la palabra secreta:</p>
+            
+            <label for="player-name-input-hangman" style="display: block; font-weight: bold; margin-bottom: 5px;">Tu Nombre de Jugador:</label>
+
+            <input type="text" id="player-name-input-hangman" class="text-input" placeholder="Tu Nombre" maxlength="20"
+                   style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 15px; border: 2px solid var(--bee-yellow); border-radius: 5px;">
+            
+            <button id="start-btn-hangman" class="btn-portal btn-trivia mt-4">¡Comenzar!</button>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="window.location.href='index.html'" style="background: none; border: none; color: #666; font-size: 0.9em; cursor: pointer;">
+                    Volver al Portal
+                </button>
+            </div>
+        </div>
+        
+        <div id="game-mode-hangman" class="hidden">
+            
+            <div class="hangman-header">
+                <div id="player-name-display-hangman" style="font-weight: bold;">Jugador: -</div> 
+                <div id="lives-display">Vidas restantes: 7</div>
+            </div>
+            
+            <div id="hangman-graphic-container" class="hangman-graphic">
+    <div class="gallows-base"></div>
+    <div class="gallows-pole"></div>
+    <div class="gallows-beam"></div>
+    <div class="gallows-rope"></div>
+
+    <div id="hg-head" class="hangman-part hidden"></div> 
+    <div id="hg-body" class="hangman-part hidden"></div>
+    <div id="hg-arm-l" class="hangman-part hidden"></div>
+    <div id="hg-arm-r" class="hangman-part hidden"></div>
+    <div id="hg-leg-l" class="hangman-part hidden"></div>
+    <div id="hg-leg-r" class="hangman-part hidden"></div>
+    <div id="hg-face" class="hangman-part hidden"></div> </div>
+            
+            <p id="word-display">_ _ _ _ _</p>
+            
+            <p id="game-status" style="font-weight: bold; margin: 15px 0;">Adivina la palabra. Tienes 7 intentos.</p>
+            
+            <p id="guessed-letters" style="color: #666; font-size: 0.9em;">Letras usadas: </p>
+            
+            <div id="keyboard-container">
+                </div>
+            
+            <button id="play-again-hangman-btn" class="btn-portal btn-messages mt-6 hidden">
+                Jugar de Nuevo
+            </button>
+            
+            <button onclick="window.location.href='index.html'" class="btn-portal btn-trivia mt-4" style="background: #ccc; box-shadow: 0 4px #999;">
+                Volver al Portal
+            </button>
+            
+        </div>
+        
+    </div>
+    <script type="module" src="script.js?v=1.0"></script>
+</body>
+</html>
